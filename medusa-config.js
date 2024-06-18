@@ -1,4 +1,5 @@
 const dotenv = require("dotenv");
+const path = require("path");
 
 let ENV_FILE_NAME = "";
 switch (process.env.NODE_ENV) {
@@ -19,7 +20,7 @@ switch (process.env.NODE_ENV) {
 
 try {
   dotenv.config({ path: process.cwd() + "/" + ENV_FILE_NAME });
-} catch (e) {}
+} catch (e) { }
 
 // CORS when consuming Medusa from admin
 const ADMIN_CORS =
@@ -29,7 +30,7 @@ const ADMIN_CORS =
 const STORE_CORS = process.env.STORE_CORS || "http://localhost:8000";
 
 const DATABASE_URL =
-  process.env.DATABASE_URL || "postgres://localhost/medusa-starter-default";
+  process.env.DATABASE_URL || "postgres://user:password@localhost:5432/mydatabase";
 
 const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
 
@@ -44,7 +45,6 @@ const plugins = [
   },
   {
     resolve: "@medusajs/admin",
-    /** @type {import('@medusajs/admin').PluginOptions} */
     options: {
       autoRebuild: true,
       develop: {
@@ -54,33 +54,34 @@ const plugins = [
   },
 ];
 
-const modules = {
-  /*eventBus: {
-    resolve: "@medusajs/event-bus-redis",
-    options: {
-      redisUrl: REDIS_URL
-    }
-  },
-  cacheService: {
-    resolve: "@medusajs/cache-redis",
-    options: {
-      redisUrl: REDIS_URL
-    }
-  },*/
-};
+const modules = {};
 
-/** @type {import('@medusajs/medusa').ConfigModule["projectConfig"]} */
 const projectConfig = {
   jwtSecret: process.env.JWT_SECRET,
   cookieSecret: process.env.COOKIE_SECRET,
   store_cors: STORE_CORS,
   database_url: DATABASE_URL,
   admin_cors: ADMIN_CORS,
-  // Uncomment the following lines to enable REDIS
-  // redis_url: REDIS_URL
+  database_extra: {
+    type: "postgres",
+    url: DATABASE_URL,
+    synchronize: false,
+    logging: true,
+    entities: [
+      path.join(__dirname, "src/models/*.js")
+    ],
+    migrations: [
+      path.join(__dirname, "src/migrations/*.js")
+    ],
+    subscribers: [
+      path.join(__dirname, "src/subscribers/*.js")
+    ],
+    cli: {
+      migrationsDir: "src/migrations"
+    }
+  }
 };
 
-/** @type {import('@medusajs/medusa').ConfigModule} */
 module.exports = {
   projectConfig,
   plugins,
