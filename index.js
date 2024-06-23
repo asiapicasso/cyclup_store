@@ -52,10 +52,14 @@ const loaders = require("@medusajs/medusa/dist/loaders/index").default
 const express = require("express");
 const { GracefulShutdownServer } = require("medusa-core-utils");
 const loaders = require("@medusajs/medusa/dist/loaders/index").default;
+const customRoutes = require('./server.js');
 
 (async () => {
   async function start() {
     const app = express();
+
+    app.use('/custom', customRoutes);
+
     const directory = process.cwd();
 
     try {
