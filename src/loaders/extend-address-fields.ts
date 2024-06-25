@@ -7,12 +7,12 @@ export default async function () {
 
     imports.allowedStoreCustomersFields = [
         ...imports.allowedStoreCustomersFields,
-        "delivery_info_recidency",
+        "delivery_info_residency",
         "delivery_info_access",
     ]
     imports.defaultStoreCustomersFields = [
         ...imports.defaultStoreCustomersFields,
-        "delivery_info_recidency",
+        "delivery_info_residency",
         "delivery_info_access",
     ]
 }
