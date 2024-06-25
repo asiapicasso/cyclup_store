@@ -1,16 +1,17 @@
-// src/custom-routes.js
 const { Router } = require('express');
 const { Address } = require('@medusajs/medusa/dist/models/address');
 
 const router = Router();
 
 router.post('/update-address', async (req, res) => {
-    const { addressId, delivery_info_recidency, delivery_info_access } = req.body;
+    console.log('Received data:', req.body);
+
+    const { addressId, delivery_info_residency, delivery_info_access } = req.body;
 
     try {
         // Met à jour l'adresse avec les nouvelles valeurs
         await Address.update(
-            { delivery_info_recidency, delivery_info_access },
+            { delivery_info_residency, delivery_info_access },
             { where: { id: addressId } }
         );
         res.status(200).json({ message: 'Address updated successfully' });
@@ -21,3 +22,4 @@ router.post('/update-address', async (req, res) => {
 });
 
 module.exports = router;
+
