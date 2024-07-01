@@ -1,8 +1,7 @@
 const dotenv = require("dotenv");
 const path = require("path");
 
-console.log('REDIS_URL:', REDIS_URL);
-
+// Détermine le fichier .env à utiliser en fonction de NODE_ENV
 let ENV_FILE_NAME = "";
 switch (process.env.NODE_ENV) {
   case "production":
@@ -20,21 +19,23 @@ switch (process.env.NODE_ENV) {
     break;
 }
 
-try {
-  dotenv.config({ path: process.cwd() + "/" + ENV_FILE_NAME });
-} catch (e) { }
-
-// CORS when consuming Medusa from admin
-const ADMIN_CORS =
-  process.env.ADMIN_CORS || "http://localhost:7000,http://localhost:7001";
-
-// CORS to avoid issues when consuming Medusa from a client
-const STORE_CORS = process.env.STORE_CORS || "http://localhost:8000";
-
-const DATABASE_URL =
-  process.env.DATABASE_URL || "postgres://user:password@localhost:5432/mydatabase";
+// Charge les variables d'environnement
+dotenv.config({ path: path.resolve(process.cwd(), ENV_FILE_NAME) });
 
 const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
+
+//console.log('REDIS_URL:', REDIS_URL); // Vérification de la variable REDIS_URL
+
+// CORS configuration
+const ADMIN_CORS = process.env.ADMIN_CORS || "http://localhost:7000,http://localhost:7001";
+const STORE_CORS = process.env.STORE_CORS || "http://localhost:8000";
+
+// Base de données et Redis configuration
+const DATABASE_URL = process.env.DATABASE_URL || "postgres://user:password@localhost:5432/mydatabase";
+
+//console.log('DATABASE_URL:', DATABASE_URL);
+//console.log('ADMIN_CORS:', ADMIN_CORS);
+//console.log('STORE_CORS:', STORE_CORS);
 
 const plugins = [
   `medusa-fulfillment-manual`,
@@ -56,28 +57,13 @@ const plugins = [
   },
 ];
 
-const modules = {
-  eventBus: {
-    resolve: "@medusajs/event-bus-redis",
-    options: {
-      redis_url: REDIS_URL,
-    }
-  },
-  cacheService: {
-    resolve: "@medusajs/cache-redis",
-    options: {
-      redis_url: REDIS_URL,
-      ttl: 30, //If it's set to 0, the module will skip adding the items to the cache.
-    },
-  },
-};
-
 const projectConfig = {
   jwtSecret: process.env.JWT_SECRET,
   cookieSecret: process.env.COOKIE_SECRET,
   store_cors: STORE_CORS,
-  database_url: DATABASE_URL, //pour qu'il puisse lier correctement la base de données
+  database_url: DATABASE_URL,
   admin_cors: ADMIN_CORS,
+  redis_url: REDIS_URL,
   database_extra: {
     type: "postgres",
     url: DATABASE_URL,
@@ -94,10 +80,37 @@ const projectConfig = {
     ],
     cli: {
       migrationsDir: "src/migrations"
-    }
-  },
-  redis_url: REDIS_URL || "redis://localhost:6379", //pour ne pas utiliser un fake redis
+    },
+    //production
+    database_extra: process.env.NODE_ENV !== "development" ?
+      {
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      } : {},
+  }
 };
+
+//console.log('projectConfig:', projectConfig);
+
+const modules = {
+  eventBus: {
+    //resolve: "@medusajs/event-bus-local",
+    resolve: "@medusajs/event-bus-redis",
+    options: {
+      redisUrl: process.env.REDIS_URL, // Utilisation de la variable REDIS_URL
+    },
+  },
+  cacheService: {
+    resolve: "@medusajs/cache-redis",
+    options: {
+      redisUrl: process.env.REDIS_URL, // Utilisation de la variable REDIS_URL
+      ttl: 30, // Si défini à 0, le module ne mettra pas les éléments en cache.
+    },
+  },
+};
+
+//console.log('modules:', modules);
 
 module.exports = {
   projectConfig,

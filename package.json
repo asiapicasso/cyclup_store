@@ -14,26 +14,27 @@
   ],
   "scripts": {
     "clean": "cross-env ./node_modules/.bin/rimraf dist",
-    "build": "cross-env npm run clean && npm run build:server && npm run build:admin && npm run build --output public",
-    "build:server": "cross-env npm run clean && tsc -p tsconfig.server.json",
-    "build:admin": "cross-env medusa-admin build --deployment",
+    "build:server": "cross-env tsc -p tsconfig.server.json",
+    "build:admin": "medusa-admin build --deployment",
+    "build": "npm run clean && npm run build:server && npm run build:admin",
     "watch": "cross-env tsc --watch",
     "test": "cross-env jest",
     "seed": "cross-env medusa seed -f ./data/seed.json",
-    "start": "cross-env npm run build && medusa start",
-    "start:custom": "cross-env npm run build && node --preserve-symlinks --trace-warnings index.js",
-    "dev": "cross-env npm run build:server && medusa develop"
+    "start": "npm run build && medusa migrations run && medusa start",
+    "start:custom": "npm run build && node --preserve-symlinks --trace-warnings index.js",
+    "dev": "npm run build:server && medusa develop"
   },
   "dependencies": {
     "@medusajs/admin": "7.1.11",
     "@medusajs/cache-inmemory": "^1.8.9",
-    "@medusajs/cache-redis": "^1.8.9",
+    "@medusajs/cache-redis": "^1.9.1",
     "@medusajs/event-bus-local": "^1.9.8",
-    "@medusajs/event-bus-redis": "^1.8.11",
+    "@medusajs/event-bus-redis": "^1.8.13",
     "@medusajs/file-local": "^1.0.3",
     "@medusajs/medusa": "1.20.2",
     "@tanstack/react-query": "4.22.0",
     "body-parser": "^1.19.0",
+    "boxen": "^4.2.0",
     "cors": "^2.8.5",
     "dotenv": "16.3.1",
     "express": "^4.17.2",
@@ -42,6 +43,7 @@
     "medusa-payment-manual": "^1.0.24",
     "medusa-payment-stripe": "^6.0.7",
     "prism-react-renderer": "^2.0.4",
+    "string-width": "^4.2.3",
     "typeorm": "^0.3.16"
   },
   "devDependencies": {
