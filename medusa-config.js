@@ -1,6 +1,8 @@
 const dotenv = require("dotenv");
 const path = require("path");
 
+console.log('REDIS_URL:', REDIS_URL);
+
 let ENV_FILE_NAME = "";
 switch (process.env.NODE_ENV) {
   case "production":
@@ -54,13 +56,27 @@ const plugins = [
   },
 ];
 
-const modules = {};
+const modules = {
+  eventBus: {
+    resolve: "@medusajs/event-bus-redis",
+    options: {
+      redis_url: REDIS_URL,
+    }
+  },
+  cacheService: {
+    resolve: "@medusajs/cache-redis",
+    options: {
+      redis_url: REDIS_URL,
+      ttl: 30, //If it's set to 0, the module will skip adding the items to the cache.
+    },
+  },
+};
 
 const projectConfig = {
   jwtSecret: process.env.JWT_SECRET,
   cookieSecret: process.env.COOKIE_SECRET,
   store_cors: STORE_CORS,
-  database_url: DATABASE_URL,
+  database_url: DATABASE_URL, //pour qu'il puisse lier correctement la base de données
   admin_cors: ADMIN_CORS,
   database_extra: {
     type: "postgres",
@@ -79,7 +95,8 @@ const projectConfig = {
     cli: {
       migrationsDir: "src/migrations"
     }
-  }
+  },
+  redis_url: REDIS_URL || "redis://localhost:6379", //pour ne pas utiliser un fake redis
 };
 
 module.exports = {
