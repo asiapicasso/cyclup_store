@@ -66,12 +66,20 @@ const express = require('express');
 const { GracefulShutdownServer } = require('medusa-core-utils');
 const loaders = require('@medusajs/medusa/dist/loaders/index').default;
 const customRoutes = require(path.resolve(__dirname, './src/server')); // Assurez-vous que le chemin est correct
+const cors = require('cors');
+
 
 (async () => {
   async function start() {
     const app = express();
 
     app.use(express.json()); // Ajout du middleware pour analyser le JSON
+
+    // Configurer CORS
+    app.use(cors({
+      origin: projectConfig.cors.origin,
+      credentials: true,
+    }));
 
     // Utilisation des routes personnalisées
     app.use('/custom', customRoutes);
