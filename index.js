@@ -79,7 +79,7 @@ const { projectConfig } = require('./medusa-config'); // Importer la configurati
 
     // Configurer CORS
     app.use(cors({
-      origin: projectConfig.cors.origin,
+      origin: process.env.ADMIN_CORS ?? "https://cyclup-store.vercel.app" ?? projectConfig.admin_cors,
       credentials: true,
     }));
 
