@@ -68,6 +68,8 @@ const loaders = require('@medusajs/medusa/dist/loaders/index').default;
 const customRoutes = require(path.resolve(__dirname, './src/server')); // Assurez-vous que le chemin est correct
 const cors = require('cors');
 
+const { projectConfig } = require('./medusa-config'); // Importer la configuration du projet
+
 
 (async () => {
   async function start() {

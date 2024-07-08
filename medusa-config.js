@@ -90,10 +90,10 @@ const projectConfig = {
         },
       } : {},
   },
-  /* cors: {
-    origin: ['http://localhost:7001'], // Ajoutez d'autres origines si nécessaire
+  cors: {
+    origin: ADMIN_CORS, // Ajoutez d'autres origines si nécessaire //origin: ADMIN_CORS.split(","), // Utilisation de la variable ADMIN_CORS
     credentials: true,
-  }, */
+  },
 
 };
 
