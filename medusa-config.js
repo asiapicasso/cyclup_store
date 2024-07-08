@@ -89,7 +89,12 @@ const projectConfig = {
           rejectUnauthorized: false,
         },
       } : {},
-  }
+  },
+  /* cors: {
+    origin: ['http://localhost:7001'], // Ajoutez d'autres origines si nécessaire
+    credentials: true,
+  }, */
+
 };
 
 //console.log('projectConfig:', projectConfig);
