@@ -1,4 +1,4 @@
-const express = require("express")
+/*const express = require("express")
 const { GracefulShutdownServer } = require("medusa-core-utils")
 const customRoutes = require(path.resolve(__dirname, './src/server')); // Assurez-vous que le chemin est correct
 
@@ -59,8 +59,8 @@ const loaders = require("@medusajs/medusa/dist/loaders/index").default
 
     await start()
   })()
+*/
 
-/*
 const path = require('path');
 const express = require('express');
 const { GracefulShutdownServer } = require('medusa-core-utils');
@@ -126,4 +126,4 @@ const customRoutes = require(path.resolve(__dirname, './src/server')); // Assure
   }
 
   await start();
-})(); */
+})(); 
