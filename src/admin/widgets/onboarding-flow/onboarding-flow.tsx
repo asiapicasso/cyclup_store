@@ -1,7 +1,9 @@
 import { OrderDetailsWidgetProps, ProductDetailsWidgetProps, WidgetConfig, WidgetProps } from "@medusajs/admin";
+import { Order, Product } from "@medusajs/medusa";
+import { Button, Container, Heading, Text, clx } from "@medusajs/ui";
 import { useAdminCustomPost, useAdminCustomQuery, useMedusa } from "medusa-react";
-import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { OnboardingState } from "../../../models/onboarding";
 import {
   AdminOnboardingUpdateStateReq,
@@ -12,14 +14,12 @@ import OrderDetailDefault from "../../components/onboarding-flow/default/orders/
 import OrdersListDefault from "../../components/onboarding-flow/default/orders/orders-list";
 import ProductDetailDefault from "../../components/onboarding-flow/default/products/product-detail";
 import ProductsListDefault from "../../components/onboarding-flow/default/products/products-list";
-import { Button, Container, Heading, Text, clx } from "@medusajs/ui";
+import OrderDetailNextjs from "../../components/onboarding-flow/nextjs/orders/order-detail";
+import OrdersListNextjs from "../../components/onboarding-flow/nextjs/orders/orders-list";
+import ProductDetailNextjs from "../../components/onboarding-flow/nextjs/products/product-detail";
+import ProductsListNextjs from "../../components/onboarding-flow/nextjs/products/products-list";
 import Accordion from "../../components/shared/accordion";
 import GetStarted from "../../components/shared/icons/get-started";
-import { Order, Product } from "@medusajs/medusa";
-import ProductsListNextjs from "../../components/onboarding-flow/nextjs/products/products-list";
-import ProductDetailNextjs from "../../components/onboarding-flow/nextjs/products/product-detail";
-import OrdersListNextjs from "../../components/onboarding-flow/nextjs/orders/orders-list";
-import OrderDetailNextjs from "../../components/onboarding-flow/nextjs/orders/order-detail";
 
 type STEP_ID =
   | "create_product"
@@ -68,7 +68,7 @@ const OnboardingFlow = (props: OnboardingWidgetProps) => {
   // get current step from custom endpoint
   const currentStep: STEP_ID | undefined = useMemo(() => {
     return data?.status
-    ?.current_step as STEP_ID
+      ?.current_step as STEP_ID
   }, [data]);
 
   // initialize some state
@@ -94,13 +94,13 @@ const OnboardingFlow = (props: OnboardingWidgetProps) => {
   // this is useful if you want to change the current step
   // using a path parameter. It can only be changed if the passed
   // step in the path parameter is the next step.
-  const [ searchParams ] = useSearchParams()
+  const [searchParams] = useSearchParams()
 
   // the steps are set based on the 
   // onboarding type
   const steps: Step[] = useMemo(() => {
     {
-      switch(process.env.MEDUSA_ADMIN_ONBOARDING_TYPE) {
+      switch (process.env.MEDUSA_ADMIN_ONBOARDING_TYPE) {
         case 'nextjs':
           return [
             {
@@ -214,7 +214,7 @@ const OnboardingFlow = (props: OnboardingWidgetProps) => {
   const isStepComplete = useCallback((step_id: STEP_ID) => {
     return findStepIndex(currentStep) > findStepIndex(step_id)
   }, [findStepIndex, currentStep]);
-  
+
   // this is used to retrieve the data necessary
   // to move to the next onboarding step
   const getOnboardingParamStepData = useCallback(async (onboardingStep: string, data?: {
@@ -232,7 +232,7 @@ const OnboardingFlow = (props: OnboardingWidgetProps) => {
           return (await client.admin.orders.retrieve(orderId)).order
         }
 
-        throw new Error ("Required `order_id` parameter was not passed as a parameter")
+        throw new Error("Required `order_id` parameter was not passed as a parameter")
       case "preview_product_nextjs":
       case "preview_product":
         if (!data?.productId && "product" in props) {
@@ -243,19 +243,19 @@ const OnboardingFlow = (props: OnboardingWidgetProps) => {
           return (await client.admin.products.retrieve(productId)).product
         }
 
-        throw new Error ("Required `product_id` parameter was not passed as a parameter")
+        throw new Error("Required `product_id` parameter was not passed as a parameter")
       default:
         return undefined
     }
   }, [searchParams, props])
 
   const isProductCreateStep = useMemo(() => {
-    return currentStep === "create_product" || 
+    return currentStep === "create_product" ||
       currentStep === "create_product_nextjs"
   }, [currentStep])
 
   const isOrderCreateStep = useMemo(() => {
-    return currentStep === "create_order" || 
+    return currentStep === "create_order" ||
       currentStep === "create_order_nextjs"
   }, [currentStep])
 
@@ -263,7 +263,7 @@ const OnboardingFlow = (props: OnboardingWidgetProps) => {
   // step is retrieved from custom endpoints
   useEffect(() => {
     setOpenStep(currentStep);
-    
+
     if (findStepIndex(currentStep) === steps.length - 1) setCompleted(true);
   }, [currentStep, findStepIndex]);
 
@@ -304,10 +304,10 @@ const OnboardingFlow = (props: OnboardingWidgetProps) => {
 
       // retrieve necessary data and trigger the next function
       getOnboardingParamStepData(onboardingStep)
-      .then((data) => {
-        steps[openStepIndex].onNext?.(data)
-      })
-      .catch((e) => console.error(e))
+        .then((data) => {
+          steps[openStepIndex].onNext?.(data)
+        })
+        .catch((e) => console.error(e))
     }
   }, [searchParams, openStep, getOnboardingParamStepData])
 
@@ -339,7 +339,7 @@ const OnboardingFlow = (props: OnboardingWidgetProps) => {
 
   // used to get text for get started header
   const getStartedText = () => {
-    switch(process.env.MEDUSA_ADMIN_ONBOARDING_TYPE) {
+    switch (process.env.MEDUSA_ADMIN_ONBOARDING_TYPE) {
       case "nextjs":
         return "Learn the basics of Medusa by creating your first order using the Next.js storefront."
       default:
@@ -468,8 +468,8 @@ const OnboardingFlow = (props: OnboardingWidgetProps) => {
                     key={step.id}
                     {...(!isComplete &&
                       !isCurrent && {
-                        customTrigger: <></>,
-                      })}
+                      customTrigger: <></>,
+                    })}
                   >
                     <div className="pl-14 pb-6 pr-7">
                       <step.component

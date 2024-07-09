@@ -1,10 +1,9 @@
-import React from "react";
 import {
   ComputerDesktopSolid,
   CurrencyDollarSolid,
   NextJs
 } from "@medusajs/icons";
-import { IconBadge, Heading, Text } from "@medusajs/ui";
+import { Heading, IconBadge, Text } from "@medusajs/ui";
 
 const OrderDetailDefault = () => {
   return (
